@@ -1,0 +1,25 @@
+options:
+  - virtualnet: ':<random> default'
+  - nat:
+services:
+  bot:
+    name: powerbot
+    volumes:
+      - pkgcache: /var/cache/pkg
+      - cache: powerbot-cache
+      - data: powerbot-data
+    start:
+      - powerbot_env: !ENV '${POWERBOT_DOTENV}'
+    options:
+      - label: 'security-group: 1'
+      - label: 'security-group.tables.allow-dns:allow-dns'
+default_volume_type: '<volumefs>'
+volumes:
+  pkgcache:
+    device: /var/cache/pkg
+    type: nullfs
+  cache:
+    device: /var/cache/appjail/powerbot/cache
+  data:
+    device: /var/appjail-volumes/powerbot/data
+  

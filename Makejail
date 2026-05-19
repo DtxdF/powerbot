@@ -1,0 +1,45 @@
+OPTION start
+OPTION overwrite=force
+OPTION volume=powerbot-data mountpoint:/data owner:${puid} group:${pgid} perm:700
+OPTION volume=powerbot-cache mountpoint:/cache owner:${puid} group:${pgid} perm:700
+
+PKG python312 uv libxml2 libxslt rust jpeg-turbo ffmpeg-nox11 antiword npm-node26
+
+INCLUDE gh+AppJail-makejails/user-mapping
+
+CMD mkdir -p /data && chmod 700 /data && chown -R noroot:noroot /data
+CMD mkdir -p /cache && chmod 700 /cache && chown -R noroot:noroot /cache
+
+USER noroot
+
+WORKDIR /noroot/src
+
+COPY pyproject.toml
+COPY uv.lock
+COPY src
+COPY README.md
+
+CMD chown -R noroot:noroot /noroot/src
+
+ENV UV_CACHE_DIR=/cache/uv
+
+RUN uv tool install textract
+RUN uv tool install .
+
+STOP
+
+STAGE start
+
+ARG powerbot_env?
+
+RAW if [ -n "${powerbot_env}" ] && [ -f "${powerbot_env}" ]; then
+        COPY ${powerbot_env} /noroot/src/.env
+        CMD chown noroot:noroot /noroot/src/.env
+        CMD chmod 400 /noroot/src/.env
+RAW fi
+
+CMD cd /noroot/src && \
+    env PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/noroot/bin:/noroot/.local/bin \
+        UV_CACHE_DIR=/cache/uv \
+            daemon -S -u noroot -T powerbot -p /var/run/powerbot.pid -t "AI-powered Telegram assistant" \
+                /noroot/.local/bin/powerbot

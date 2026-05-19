@@ -1,0 +1,32 @@
+[project]
+name = "powerbot"
+version = "0.1.0"
+description = "Experimental, opinionated and potentially powerful AI-powered Telegram assistant"
+readme = "README.md"
+authors = [
+    { name = "Jesús Daniel Colmenares Oviedo", email = "DtxdF@disroot.org" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "aiofiles>=25.1.0",
+    "aiogram>=3.27.0",
+    "google-genai>=2.0.0",
+    "hjson>=3.1.0",
+    "lmdb>=2.2.0",
+    "mcp>=1.27.1",
+    "mimetypes-magic>=0.4.30",
+    "nh3>=0.3.5",
+    "openai>=2.36.0",
+    "openai-agents>=0.17.2",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.2",
+]
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+
+[project.scripts]
+powerbot = "powerbot:main"
+
+[build-system]
+requires = ["uv_build>=0.11.8,<0.12.0"]
+build-backend = "uv_build"
