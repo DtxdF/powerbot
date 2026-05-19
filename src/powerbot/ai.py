@@ -188,7 +188,7 @@ async def make_response_openai(message, bot=None, text=None):
                 mcp_servers=mcp_manager.active_servers
             )
 
-        full_context = load_history_openai(user_id)
+        full_context = await asyncio.to_thread(load_history_openai, user_id)
         full_context = purge_history_openai(full_context)
 
         text = text or message.caption or message.text or ""
@@ -243,7 +243,7 @@ async def make_response_openai(message, bot=None, text=None):
 
             full_context = purge_history_openai(full_context)
 
-            save_history_openai(user_id, full_context)
+            await asyncio.to_thread(save_history_openai, user_id, full_context)
 
         if len(output.strip()) == 0:
             return
@@ -711,7 +711,7 @@ async def make_response_gemini(message, bot=None, text=None):
 
     chat = client.aio.chats.create(
         model=model,
-        history=load_history_gemini(user_id)
+        history=await asyncio.to_thread(load_history_gemini, user_id)
     )
 
     data = {
@@ -811,7 +811,7 @@ async def make_response_gemini(message, bot=None, text=None):
 
         history = chat.get_history()
 
-        save_history_gemini(user_id, history)
+        await asyncio.to_thread(save_history_gemini, user_id, history)
 
         output = _escape_bad_output(response.text)
 
