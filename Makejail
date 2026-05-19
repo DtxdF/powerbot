@@ -18,6 +18,7 @@ COPY pyproject.toml
 COPY uv.lock
 COPY src
 COPY README.md
+COPY LICENSE
 
 CMD chown -R noroot:noroot /noroot/src
 
