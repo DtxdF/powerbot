@@ -52,13 +52,13 @@ Hooks work the same way as tools: they are loaded at runtime and reloaded if the
 
 ```python
 async def powerbot_deny_format(last):
-	message = POWERBOT_DATA["AIOGRAM_MESSAGE"]
+    message = POWERBOT_DATA["AIOGRAM_MESSAGE"]
 
-	if message.photo is not None \
-			or message.document is not None:
-		await message.answer("Unsupported format.")
-		# Anything (except None) will just works!
-		return False
+    if message.photo is not None \
+            or message.document is not None:
+        await message.answer("Unsupported format.")
+        # Anything (except None) will just works!
+        return False
 ```
 
 ### Namespaces
