@@ -40,7 +40,7 @@ RAW if [ -n "${powerbot_env}" ] && [ -f "${powerbot_env}" ]; then
 RAW fi
 
 CMD cd /noroot/src && \
-    env PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/noroot/bin:/noroot/.local/bin \
-        UV_CACHE_DIR=/cache/uv \
-            daemon -S -u noroot -T powerbot -p /var/run/powerbot.pid -t "AI-powered Telegram assistant" \
+    daemon -S -u noroot -T powerbot -p /var/run/powerbot.pid -t "AI-powered Telegram assistant" \
+        env PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/noroot/bin:/noroot/.local/bin \
+            UV_CACHE_DIR=/cache/uv \
                 /noroot/.local/bin/powerbot
