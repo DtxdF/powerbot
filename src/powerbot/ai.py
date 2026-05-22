@@ -379,7 +379,7 @@ async def process_file_openai(client, message, bot):
         voice = message.reply_to_message.voice
 
     if voice is not None:
-        file_format = "voice"
+        file_format = "audio"
 
     sticker = message.sticker
 
