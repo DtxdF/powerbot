@@ -346,40 +346,64 @@ async def process_file_openai(client, message, bot):
     if document is None and message.reply_to_message is not None:
         document = message.reply_to_message.document
 
+    if document is not None:
+        file_format = "document"
+
     photo = message.photo
 
     if photo is None and message.reply_to_message is not None:
         photo = message.reply_to_message.photo
+
+    if photo is not None:
+        file_format = "photo"
 
     audio = message.audio
 
     if audio is None and message.reply_to_message is not None:
         audio = message.reply_to_message.audio
 
+    if audio is not None:
+        file_format = "audio"
+
     video = message.video
 
     if video is None and message.reply_to_message is not None:
         video = message.reply_to_message.video
+
+    if video is not None:
+        file_format = "video"
 
     voice = message.voice
 
     if voice is None and message.reply_to_message is not None:
         voice = message.reply_to_message.voice
 
+    if voice is not None:
+        file_format = "voice"
+
     sticker = message.sticker
 
     if sticker is None and message.reply_to_message is not None:
         sticker = message.reply_to_message.sticker
+
+    if sticker is not None:
+        file_format = "video"
 
     video_note = message.video_note
 
     if video_note is None and message.reply_to_message is not None:
         video_note = message.reply_to_message.video_note
 
+    if video_note is not None:
+        file_format = "video"
+
     animation = message.animation
 
     if animation is None and message.reply_to_message is not None:
         animation = message.reply_to_message.animation
+
+    if animation is not None:
+        file_format = "video"
 
     contents = []
     has_vision = False
@@ -393,6 +417,19 @@ async def process_file_openai(client, message, bot):
             video_note is None and \
             animation is None:
         return contents, has_vision
+
+    allowed_formats = os.getenv("POWERBOT_ALLOWED_FORMATS")
+
+    if allowed_formats is not None:
+        allowed_formats = allowed_formats.split(" ")
+
+        if file_format not in allowed_formats:
+            contents.append({
+                "type" : "text",
+                "text" : "[POWERBOT: unsupported-format]"
+            })
+
+            return contents, has_vision
 
     if video is not None or \
             video_note is not None or \
@@ -778,6 +815,10 @@ async def make_response_gemini(message, bot=None, text=None):
         if bot is not None:
             file = await process_file_gemini(client, message, bot)
 
+            if isinstance(file, bool) and not file:
+                file = None
+                contents.append("[POWERBOT: unsupported-format]")
+
             if file is not None:
                 contents.append(file)
 
@@ -868,40 +909,64 @@ async def process_file_gemini(client, message, bot):
     if document is None and message.reply_to_message is not None:
         document = message.reply_to_message.document
 
+    if document is not None:
+        file_format = "document"
+
     photo = message.photo
 
     if photo is None and message.reply_to_message is not None:
         photo = message.reply_to_message.photo
+
+    if photo is not None:
+        file_format = "photo"
 
     audio = message.audio
 
     if audio is None and message.reply_to_message is not None:
         audio = message.reply_to_message.audio
 
+    if audio is not None:
+        file_format = "audio"
+
     video = message.video
 
     if video is None and message.reply_to_message is not None:
         video = message.reply_to_message.video
+
+    if video is not None:
+        file_format = "video"
 
     voice = message.voice
 
     if voice is None and message.reply_to_message is not None:
         voice = message.reply_to_message.voice
 
+    if voice is not None:
+        file_format = "audio"
+
     sticker = message.sticker
 
     if sticker is None and message.reply_to_message is not None:
         sticker = message.reply_to_message.sticker
+
+    if sticker is not None:
+        file_format = "video"
 
     video_note = message.video_note
 
     if video_note is None and message.reply_to_message is not None:
         video_note = message.reply_to_message.video_note
 
+    if video_note is not None:
+        file_format = "video"
+
     animation = message.animation
 
     if animation is None and message.reply_to_message is not None:
         animation = message.reply_to_message.animation
+
+    if animation is not None:
+        file_format = "video"
 
     if document is None and \
             photo is None and \
@@ -912,6 +977,14 @@ async def process_file_gemini(client, message, bot):
             video_note is None and \
             animation is None:
         return
+
+    allowed_formats = os.getenv("POWERBOT_ALLOWED_FORMATS")
+
+    if allowed_formats is not None:
+        allowed_formats = allowed_formats.split(" ")
+
+        if file_format not in allowed_formats:
+            return False
 
     mime_type = None
 
